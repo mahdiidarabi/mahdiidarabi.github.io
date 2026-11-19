@@ -64,7 +64,7 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 /* sidebar */
 aside { position: sticky; top: 28px; align-self: start; display: grid; gap: 22px; padding: 24px 18px 18px; }
 .id { display: grid; justify-items: center; gap: 10px; text-align: center; }
-.avatar { width: 112px; height: 112px; position: relative; }
+.avatar { width: 120px; height: 120px; position: relative; }
 .avatar canvas, .avatar img { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
 .avatar::after {
   content: ""; position: absolute; right: -6px; bottom: -6px; width: 14px; height: 14px; background: #6fd08c;
@@ -183,8 +183,8 @@ p { margin: 0; }
 @media (max-width: 860px) {
   .app { grid-template-columns: minmax(0, 1fr); gap: 22px; padding-block: 16px 28px; }
   aside { position: static; padding: 16px; gap: 14px; }
-  .id { grid-template-columns: 64px minmax(0, 1fr); justify-items: start; text-align: left; gap: 4px 14px; align-items: center; }
-  .avatar { width: 64px; height: 64px; grid-row: span 2; }
+  .id { grid-template-columns: 80px minmax(0, 1fr); justify-items: start; text-align: left; gap: 4px 14px; align-items: center; }
+  .avatar { width: 80px; height: 80px; grid-row: span 2; }
   .avatar::after { width: 10px; height: 10px; right: -4px; bottom: -4px; }
   .name { font-size: 1.3rem; margin: 0; align-self: end; }
   .tagline { align-self: start; }
@@ -208,7 +208,7 @@ p { margin: 0; }
 <div class="app">
   <aside class="px">
     <div class="id">
-      <div class="avatar"><canvas id="avatar" width="16" height="16" aria-label="Pixel monogram MD"></canvas></div>
+      <div class="avatar"><canvas id="avatar" width="40" height="40" role="img" aria-label="Pixel portrait of Mahdi Darabi"></canvas></div>
       <p class="name">Mahdi <span>Darabi</span></p>
       <p class="tagline">Senior Blockchain Engineer<br>Smart contracts · MPC/TSS · bridges</p>
     </div>
@@ -456,29 +456,15 @@ p { margin: 0; }
     try { navigator.clipboard.writeText(email).then(function () { done('Copied'); }, fallback); } catch (e) { fallback(); }
   });
 
-  /* ---------- pixel monogram avatar (16x16 sprite) ---------- */
+  /* ---------- pixel avatar (40x40 sprite from the X avatar) ---------- */
   var av = document.getElementById('avatar');
   if (av && av.getContext) {
     var g = av.getContext('2d');
-    g.fillStyle = '#475e7e'; g.fillRect(0, 0, 16, 16);
-    for (var y = 0; y < 16; y++) for (var x = 0; x < 16; x++) {
-      if ((x + y) % 2 === 0 && (x * 7 + y * 3) % 5 === 0) { g.fillStyle = '#51698b'; g.fillRect(x, y, 1, 1); }
-    }
-    g.fillStyle = '#2b3a52'; g.fillRect(0, 14, 16, 2);
-    var M = ['10001', '11011', '10101', '10101', '10001', '10001', '10001'];
-    var D = ['11110', '10001', '10001', '10001', '10001', '10001', '11110'];
-    function glyph(rows, ox, oy) {
-      rows.forEach(function (row, j) {
-        for (var i = 0; i < 5; i++) if (row[i] === '1') {
-          g.fillStyle = '#04080f'; g.fillRect(ox + i + 1, oy + j + 1, 1, 1);
-        }
-      });
-      rows.forEach(function (row, j) {
-        for (var i = 0; i < 5; i++) if (row[i] === '1') { g.fillStyle = '#e7ecf4'; g.fillRect(ox + i, oy + j, 1, 1); }
-      });
-    }
-    glyph(M, 2, 4); glyph(D, 9, 4);
-    g.fillStyle = '#e7a56f'; g.fillRect(13, 1, 1, 1); g.fillStyle = '#c9773f'; g.fillRect(14, 2, 1, 1);
+    var PAL = {"A": "#303030", "a": "#486078", "b": "#000000", "c": "#301818", "d": "#181800", "e": "#603018", "f": "#181818", "g": "#604830", "h": "#603030", "i": "#180000", "j": "#301800", "k": "#483018", "l": "#303018", "m": "#484878", "n": "#d89060", "o": "#f0a878", "p": "#f0a860", "q": "#d8a860", "r": "#d8a878", "s": "#f0f0f0", "t": "#fff0f0"};
+    var SPRITE = ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "aaaaaaaaaaaaaaaabbbbbbbbbaaaaaaaaaaaaaaa", "aaaaaaaaaaaaabbabbbbbbbbbaaaaaaaaaaaaaaa", "aaaaaaaaaaabbcbbdddccccefbbaaaaaaaaaaaaa", "aaaaaaaaaaabbcccccccgcchcfccbaaaaaaaaaaa", "aaaaaaaaabbiccccdddccccccffjhbaaaaaaaaaa", "aaaaaaaabbbcccccdddccccccffkcbaaaaaaaaaa", "aaaaaaaabbbcccffffldfccffffcccbaaaaaaaaa", "aaaaaaaaambffdffddddidiiiiiiclbaaaaaaaaa", "aaaaaaaaabdffffdnnooooooooniibbaaaaaaaaa", "aaaaaaaabbffffinnoooooooooonnbaaaaaaaaaa", "aaaaaaaabddfffinnoooooooooopnbaaaaaaaaaa", "aaaaaaaabfffffnpooooooooooooobaaaaaaaaaa", "aaaaaaaabfffffppfccffoooofcccbaaaaaaaaaa", "aaaaaaaaabfbbfoqjbbbcoooqcbbbbaaaaaaaaaa", "aaaaaaaaabbibfpqrbbbnoooosbbbbaaaaaaaaaa", "aaaaaaaaabipbbpprsbbnoooosbbqbaaaaaaaaaa", "aaaaaaaabooopdqootbbooooosbbobaaaaaaaaaa", "aaaaaaaaboonofqoooooooooooooobaaaaaaaaaa", "aaaaaaaaboonrdqoooooooooooooobaaaaaaaaaa", "aaaaaaaaboppibqoooooooiiooooobaaaaaaaaaa", "aaaaaaaaabbrnbcooocccccccccoobaaaaaaaaaa", "aaaaaaaaaabbbbccooccbiiibbcocbaaaaaaaaaa", "aaaaaaaaaaabbbcccccooooopbbbcbaaaaaaaaaa", "aaaaaaaaaaaabbcccccoooooiibbbbaaaaaaaaaa", "aaaaaaaaaaaaabbccccooibbbcccbbaaaaaaaaaa", "aaaaaaaaaaaaabnbccccccccrccbbaaaaaaaaaaa", "aaaaaaaaaaaabbnnbdccccccccbaaaaaaaaaaaaa", "aaaaaaaaabbbbbnnnbbcccccbbaaaaaaaaaaaaaa", "aaaaaaaabfffbbnpnnnibbbbaaaaaaaaaaaaaaaa", "aaaaaaaabffffbrpnnnnnibbaaaaaaaaaaaaaaaa", "aaaaaabbbffffbrpqqnnnbbfbbaaaaaaaaaaaaaa", "aaaaabbAAAAfffbbopppqbbfffbaaaaaaaaaaaaa", "aaaaabbAAAAfffbbqpopqbffAAbaaaaaaaaaaaaa", "aaabbAAAAAAAAAAfbrpibfffAAAbaaaaaaaaaaaa", "aaabbAAAAffAAAAAAbbbfAAAfAAbaaaaaaaaaaaa", "aaabbAAAAffAAAAAAbbbfAAAfAAbaaaaaaaaaaaa", "aaabbAAAAffAAAAAAbbbfAAAfAAbaaaaaaaaaaaa", "aaabbAAAAffAAAAAAbbbfAAAfAAbaaaaaaaaaaaa"];
+    SPRITE.forEach(function (row, y) {
+      for (var x = 0; x < row.length; x++) { g.fillStyle = PAL[row[x]]; g.fillRect(x, y, 1, 1); }
+    });
   }
 
   /* ---------- pixel field background ---------- */
