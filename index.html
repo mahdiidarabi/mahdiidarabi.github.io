@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mahdi Darabi</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Mahdi Darabi, Senior Blockchain Engineer: smart contracts, MPC/TSS wallets, cross-chain bridges and applied cryptography.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&family=Pixelify+Sans:wght@500;700&display=swap">
+<style>
+/* Layout: fixed pixel sidebar with tabs on the left, one tab panel on the right; on phones the sidebar becomes a top bar.
+   Palette comes from the X avatar: slate-blue ground, navy shadows, warm skin/ember accent. Single dark theme by design. */
+:root {
+  color-scheme: dark;
+  --bg: #0a1120;
+  --bg-2: #0e1729;
+  --panel: #121d33;
+  --panel-2: #182640;
+  --slate: #475e7e;
+  --line: #263856;
+  --fg: #e7ecf4;
+  --muted: #98a7bf;
+  --ember: #e7a56f;
+  --ember-deep: #c9773f;
+  --sky: #9cc0f2;
+  --shadow: #04080f;
+  --pixel: "Pixelify Sans", "JetBrains Mono", ui-monospace, monospace;
+  --display: "Space Grotesk", "IBM Plex Sans", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --px: 4px;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: var(--body); font-size: 15.5px; line-height: 1.6; -webkit-font-smoothing: antialiased;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+#bg { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; image-rendering: pixelated; }
+a { color: var(--sky); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; }
+
+/* pixel frame: notched square corners like a sprite border */
+.px {
+  background: var(--panel);
+  box-shadow:
+    0 calc(-1 * var(--px)) 0 0 var(--line), 0 var(--px) 0 0 var(--line),
+    calc(-1 * var(--px)) 0 0 0 var(--line), var(--px) 0 0 0 var(--line);
+}
+
+.app {
+  position: relative; z-index: 1; display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 28px;
+  max-width: 1180px; margin: 0 auto; min-height: 100%;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+  padding-block: 28px;
+}
+
+/* sidebar */
+aside { position: sticky; top: 28px; align-self: start; display: grid; gap: 22px; padding: 24px 18px 18px; }
+.id { display: grid; justify-items: center; gap: 10px; text-align: center; }
+.avatar { width: 112px; height: 112px; position: relative; }
+.avatar canvas, .avatar img { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+.avatar::after {
+  content: ""; position: absolute; right: -6px; bottom: -6px; width: 14px; height: 14px; background: #6fd08c;
+  box-shadow: 0 0 0 4px var(--panel);
+}
+.name { font-family: var(--display); font-weight: 700; font-size: 1.45rem; line-height: 1.15; margin: 4px 0 0; letter-spacing: -0.01em; }
+.name span { color: var(--ember); }
+.tagline { margin: 0; color: var(--muted); font-size: 0.86rem; line-height: 1.45; }
+nav { display: grid; gap: 6px; }
+nav a {
+  display: flex; align-items: center; gap: 12px; padding: 9px 12px; color: var(--muted);
+  font-family: var(--mono); font-size: 0.86rem; text-decoration: none;
+}
+nav a i { width: 8px; height: 8px; background: var(--line); flex: none; }
+nav a:hover { color: var(--fg); background: var(--panel-2); text-decoration: none; }
+nav a:hover i { background: var(--slate); }
+nav a[aria-current="page"] { color: var(--shadow); background: var(--ember); font-weight: 500; box-shadow: 4px 4px 0 0 var(--shadow); }
+nav a[aria-current="page"] i { background: var(--shadow); }
+.side-foot { display: grid; gap: 4px; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 14px; }
+
+/* main panel */
+main { padding: 36px 40px 40px; min-width: 0; align-self: start; }
+.tab { display: grid; gap: 28px; }
+.tab[hidden] { display: none; }
+@media (prefers-reduced-motion: no-preference) { .tab.enter { animation: pxin .28s steps(5) both; } }
+@keyframes pxin { from { opacity: 0; transform: translateY(8px); filter: blur(2px); } to { opacity: 1; transform: none; filter: none; } }
+.eyebrow { font-family: var(--mono); font-size: 0.76rem; color: var(--ember); letter-spacing: 0.08em; text-transform: uppercase; margin: 0; }
+h1, h2 { font-family: var(--pixel); font-weight: 700; margin: 0; line-height: 1.1; text-wrap: balance; }
+h1 { font-family: var(--display); font-size: clamp(2.3rem, 5.5vw, 3.3rem); letter-spacing: -0.025em; }
+.intro { display: grid; gap: 10px; }
+.role { font-family: var(--display); font-weight: 500; font-size: clamp(1.15rem, 2.4vw, 1.4rem); color: var(--ember); letter-spacing: -0.01em; }
+h2 { font-size: 1.6rem; display: flex; align-items: center; gap: 12px; }
+h2::before { content: ""; width: 10px; height: 22px; background: var(--ember); box-shadow: 4px 4px 0 0 var(--ember-deep); flex: none; }
+h3 { margin: 0; font-weight: 600; font-size: 1.04rem; }
+p { margin: 0; }
+.lede { font-size: 1.06rem; max-width: 64ch; }
+.muted { color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 10px 18px; font-family: var(--mono); font-size: 0.8rem; color: var(--muted); }
+.chips b { color: var(--fg); font-weight: 500; }
+
+.figures { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.fig { padding: 18px 18px 16px; display: grid; gap: 6px; align-content: start; background: var(--panel-2); }
+.fig b { font-family: var(--display); font-weight: 700; font-size: 2.2rem; line-height: 1; color: var(--ember); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.fig span { font-size: 0.88rem; color: var(--muted); line-height: 1.45; }
+
+.cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.box { padding: 18px; background: var(--panel-2); display: grid; gap: 8px; align-content: start; }
+.box h3 { font-family: var(--mono); font-size: 0.8rem; font-weight: 500; color: var(--ember); text-transform: uppercase; letter-spacing: 0.06em; }
+.box ul { margin: 0; padding-left: 16px; display: grid; gap: 4px; color: var(--muted); font-size: 0.93rem; }
+
+.btns { display: flex; flex-wrap: wrap; gap: 14px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; cursor: pointer;
+  font-family: var(--mono); font-size: 0.85rem; color: var(--fg); background: var(--panel-2); border: 0;
+  box-shadow: 0 -2px 0 0 var(--slate), 0 2px 0 0 var(--slate), -2px 0 0 0 var(--slate), 2px 0 0 0 var(--slate), 5px 5px 0 0 var(--shadow);
+}
+.btn:hover { text-decoration: none; transform: translate(2px, 2px); box-shadow: 0 -2px 0 0 var(--ember), 0 2px 0 0 var(--ember), -2px 0 0 0 var(--ember), 2px 0 0 0 var(--ember), 3px 3px 0 0 var(--shadow); color: var(--ember); }
+.btn.primary { background: var(--ember); color: var(--shadow); font-weight: 500; }
+.btn.primary:hover { color: var(--shadow); }
+
+/* experience timeline */
+.timeline { display: grid; gap: 0; }
+.job { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 16px; }
+.rail { position: relative; }
+.rail::before { content: ""; position: absolute; left: 7px; top: 8px; width: 8px; height: 8px; background: var(--ember); box-shadow: 0 0 0 3px var(--bg-2); }
+.rail::after { content: ""; position: absolute; left: 10px; top: 22px; bottom: -6px; width: 2px; background: repeating-linear-gradient(var(--line) 0 4px, transparent 4px 8px); }
+.job:last-child .rail::after { display: none; }
+.job-body { padding-bottom: 28px; display: grid; gap: 6px; min-width: 0; }
+.job-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 16px; align-items: baseline; }
+.job-head h3 span { color: var(--muted); font-weight: 500; }
+.date { font-family: var(--mono); font-size: 0.78rem; color: var(--ember); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.org { color: var(--muted); font-size: 0.88rem; }
+.job ul { margin: 4px 0 0; padding-left: 18px; display: grid; gap: 6px; }
+.job li::marker { color: var(--slate); }
+
+/* projects */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.filters button {
+  font-family: var(--mono); font-size: 0.78rem; padding: 5px 11px; cursor: pointer; color: var(--muted);
+  background: var(--panel-2); border: 0; box-shadow: 0 0 0 1px var(--line);
+}
+.filters button[aria-pressed="true"] { color: var(--shadow); background: var(--sky); box-shadow: 3px 3px 0 0 var(--shadow); }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.proj { padding: 18px; background: var(--panel-2); display: grid; gap: 8px; align-content: start; min-width: 0; transition: transform .12s steps(2); }
+.proj:hover { transform: translate(-2px, -2px); box-shadow: 0 -4px 0 0 var(--slate), 0 4px 0 0 var(--slate), -4px 0 0 0 var(--slate), 4px 0 0 0 var(--slate), 8px 8px 0 0 var(--shadow); }
+.proj p { color: var(--muted); font-size: 0.92rem; line-height: 1.5; }
+.repo { font-family: var(--mono); font-size: 0.76rem; overflow-wrap: anywhere; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-family: var(--mono); font-size: 0.7rem; color: var(--sky); background: #1d2e4b; padding: 2px 7px; }
+.more { color: var(--muted); font-size: 0.92rem; }
+
+/* writing */
+.posts { list-style: none; margin: 0; padding: 0; display: grid; }
+.posts li { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 16px; padding: 13px 0; border-top: 1px dashed var(--line); }
+.posts li:first-child { border-top: 0; padding-top: 0; }
+.posts a { color: var(--fg); font-weight: 500; }
+.posts a:hover { color: var(--ember); }
+.pub { display: block; font-size: 0.82rem; color: var(--muted); }
+.series { font-family: var(--mono); font-size: 0.7rem; color: var(--shadow); background: var(--sky); padding: 1px 6px; margin-right: 8px; }
+
+/* skills */
+.skillgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.skill { padding: 18px; background: var(--panel-2); display: grid; gap: 10px; align-content: start; }
+.skill h3 { font-family: var(--display); font-weight: 600; font-size: 1.08rem; color: var(--ember); letter-spacing: -0.01em; }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.pills span { font-size: 0.82rem; padding: 3px 9px; background: var(--panel); box-shadow: 0 0 0 1px var(--line); }
+
+/* contact */
+.contact { display: grid; gap: 14px; }
+.row { display: grid; grid-template-columns: 120px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 14px 18px; background: var(--panel-2); }
+.row .k { font-family: var(--mono); font-size: 0.76rem; color: var(--ember); text-transform: uppercase; letter-spacing: 0.06em; }
+.row .v { overflow-wrap: anywhere; min-width: 0; }
+.copy { font-family: var(--mono); font-size: 0.74rem; padding: 5px 10px; cursor: pointer; color: var(--fg); background: var(--panel); border: 0; box-shadow: 0 0 0 1px var(--slate), 3px 3px 0 0 var(--shadow); }
+.copy:hover { color: var(--ember); }
+
+@media (max-width: 860px) {
+  .app { grid-template-columns: minmax(0, 1fr); gap: 22px; padding-block: 16px 28px; }
+  aside { position: static; padding: 16px; gap: 14px; }
+  .id { grid-template-columns: 64px minmax(0, 1fr); justify-items: start; text-align: left; gap: 4px 14px; align-items: center; }
+  .avatar { width: 64px; height: 64px; grid-row: span 2; }
+  .avatar::after { width: 10px; height: 10px; right: -4px; bottom: -4px; }
+  .name { font-size: 1.3rem; margin: 0; align-self: end; }
+  .tagline { align-self: start; }
+  nav { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  nav a { justify-content: center; padding: 9px 4px; font-size: 0.8rem; white-space: nowrap; background: var(--panel-2); }
+  nav a i { display: none; }
+  nav a[aria-current="page"] { box-shadow: 3px 3px 0 0 var(--shadow); }
+  .side-foot { display: none; }
+  main { padding: 26px 20px 30px; }
+  .figures, .cols, .grid, .skillgrid { grid-template-columns: minmax(0, 1fr); }
+  .posts li { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .row { grid-template-columns: minmax(0, 1fr) auto; }
+  .row .k { grid-column: 1 / -1; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg" aria-hidden="true"></canvas>
+
+<div class="app">
+  <aside class="px">
+    <div class="id">
+      <div class="avatar"><canvas id="avatar" width="16" height="16" aria-label="Pixel monogram MD"></canvas></div>
+      <p class="name">Mahdi <span>Darabi</span></p>
+      <p class="tagline">Senior Blockchain Engineer<br>Smart contracts · MPC/TSS · bridges</p>
+    </div>
+    <nav aria-label="Sections">
+      <a href="#about" data-tab="about"><i></i>About</a>
+      <a href="#experience" data-tab="experience"><i></i>Experience</a>
+      <a href="#projects" data-tab="projects"><i></i>Projects</a>
+      <a href="#writing" data-tab="writing"><i></i>Writing</a>
+      <a href="#skills" data-tab="skills"><i></i>Skills</a>
+      <a href="#contact" data-tab="contact"><i></i>Contact</a>
+    </nav>
+    <div class="side-foot">
+      <span>Istanbul · UTC+3</span>
+      <span>y² = x³ + 4 over 𝔽ₚ (BLS12-381)</span>
+    </div>
+  </aside>
+
+  <main class="px">
+    <!-- ABOUT -->
+    <section class="tab" id="tab-about" data-name="about">
+      <div class="intro">
+        <h1>Mahdi Darabi</h1>
+        <p class="role">Senior Blockchain Engineer</p>
+      </div>
+      <div class="chips"><span><b>Istanbul</b>, Türkiye</span><span>UTC+3</span><span>Open to remote</span></div>
+      <p class="lede">I build systems that hold and move value: exchange wallet infrastructure, MPC/TSS custody, a Bitcoin to EVM bridge, and the cryptography underneath them. Security runs through all of it, from audit remediation and exploit reproduction to threshold key recovery. Now I also build benchmarks that test AI coding agents on real blockchain bugs.</p>
+      <div class="figures">
+        <div class="fig px"><b>$150M+</b><span>user assets secured by the exchange wallet system I maintained, across 20+ chains</span></div>
+        <div class="fig px"><b>$350M+</b><span>bridged through TeleSwap, the Bitcoin to EVM bridge I helped found, zero critical incidents</span></div>
+      </div>
+      <div class="cols">
+        <div class="box px">
+          <h3>What I do</h3>
+          <ul>
+            <li>Smart contracts in Solidity: upgradeable, audited, tested</li>
+            <li>Wallet and custody infrastructure, MPC/TSS key management</li>
+            <li>Cross-chain bridges and Bitcoin light clients</li>
+            <li>Applied cryptography: BLS, zkSNARKs, Circom</li>
+          </ul>
+        </div>
+        <div class="box px">
+          <h3>Looking for</h3>
+          <ul>
+            <li>Protocol, smart contract or blockchain security roles</li>
+            <li>Wallet, custody and exchange infrastructure teams</li>
+            <li>Blockchain plus AI agent work</li>
+            <li>Remote, or on-site in Istanbul</li>
+          </ul>
+        </div>
+      </div>
+      <div class="btns">
+        <a class="btn primary" href="#experience">See experience</a>
+        <a class="btn" href="#projects">See projects</a>
+        <a class="btn" href="https://github.com/mahdiidarabi" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section class="tab" id="tab-experience" data-name="experience" hidden>
+      <h2>Experience</h2>
+      <div class="timeline">
+        <div class="job"><div class="rail"></div><div class="job-body">
+          <div class="job-head"><h3>AI Research Engineer <span>· Turing</span></h3><span class="date">09/2026 – now</span></div>
+          <p class="org">AI research and training company · <a href="https://www.turing.com" target="_blank" rel="noopener">turing.com</a></p>
+          <ul>
+            <li>Designed adversarial Terminal-Bench tasks from real bugs in production blockchain code (the lnd Lightning node in Go, the Vyper compiler). Three went unsolved in all 12 valid runs by frontier coding agents.</li>
+            <li>Built security-engineering tasks on Circom ZK circuits, tss-lib threshold-ECDSA wallet recovery and the Cosmos SDK.</li>
+            <li>Built f2pgen, an LLM evaluation benchmark where coding agents write fail-to-pass tests for real GitHub PRs, judged by a deterministic verifier in Docker sandboxes. 5,000+ agent trials across 6 models.</li>
+          </ul>
+        </div></div>
+        <div class="job"><div class="rail"></div><div class="job-body">
+          <div class="job-head"><h3>Senior Blockchain Engineer, Security <span>· CoinTR</span></h3><span class="date">09/2024 – 08/2026</span></div>
+          <p class="org">Cryptocurrency exchange, 2M+ users · <a href="https://www.cointr.com" target="_blank" rel="noopener">cointr.com</a></p>
+          <ul>
+            <li>Refactored and maintained the production wallet system (Python/Django), securing $150M+ in user assets across 20+ networks (ECDSA and EdDSA).</li>
+            <li>Developed a TSS/MPC wallet in Go on binance/tss-lib with a custom distributed key-recovery module and a T-of-N recovery quorum under a zero-trust model.</li>
+            <li>Built a batch-withdrawal pipeline for EVM networks (Solidity + Django) that cut on-chain fees by 30%. Kept hot/cold wallets and multi-chain flows running through node failures, reorgs and stuck transactions.</li>
+          </ul>
+        </div></div>
+        <div class="job"><div class="rail"></div><div class="job-body">
+          <div class="job-head"><h3>Founding Engineer, Blockchain <span>· TeleSwap (TeleportDAO)</span></h3><span class="date">05/2022 – 09/2024</span></div>
+          <p class="org">Bitcoin to EVM bridge · <a href="https://teleswap.xyz" target="_blank" rel="noopener">teleswap.xyz</a></p>
+          <ul>
+            <li>Designed the bridge trust model: a Bitcoin light client on EVM (SPV proofs, difficulty retarget) plus validator collateral and slashing. $350M+ processed, zero critical incidents.</li>
+            <li>Wrote upgradeable Solidity contracts for minting, redemption and access control with 92% test coverage, and wrote the remediations for external audit findings.</li>
+            <li>Expanded the bridge to 5 EVM networks with LayerZero and implemented the BLS12-381 aggregation library used in production.</li>
+          </ul>
+        </div></div>
+        <div class="job"><div class="rail"></div><div class="job-body">
+          <div class="job-head"><h3>Smart Contract Engineer <span>· TotemFi</span></h3><span class="date">11/2020 – 05/2022</span></div>
+          <p class="org">Bitcoin price prediction market on BNB Chain</p>
+          <ul>
+            <li>Migrated core contracts to an upgradeable proxy architecture with state and access control preserved.</li>
+            <li>Ran the internal security audit before launch, fixing arithmetic and decimal bugs, and built NFT factory contracts for user rewards.</li>
+          </ul>
+        </div></div>
+        <div class="job"><div class="rail"></div><div class="job-body">
+          <div class="job-head"><h3>Blockchain Researcher <span>· Decentralab</span></h3><span class="date">11/2017 – 10/2020</span></div>
+          <p class="org">Blockchain lab at Sharif University of Technology</p>
+          <ul>
+            <li>Delivered an end-to-end debt-tracking system on Hyperledger Fabric (chaincode in Go) and led applied research with a team of 3 PhD researchers.</li>
+          </ul>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="tab" id="tab-projects" data-name="projects" hidden>
+      <h2>Projects</h2>
+      <div class="filters" role="group" aria-label="Filter projects">
+        <button type="button" id="f-all" data-f="all" aria-pressed="true">All</button>
+        <button type="button" id="f-crypto" data-f="crypto" aria-pressed="false">Cryptography &amp; ZK</button>
+        <button type="button" id="f-security" data-f="security" aria-pressed="false">Security</button>
+        <button type="button" id="f-contracts" data-f="contracts" aria-pressed="false">Bitcoin</button>
+      </div>
+      <div class="grid">
+        <article class="proj px" data-cat="crypto">
+          <h3>BLS12-381 signature aggregation</h3>
+          <p>TypeScript library for BLS signature aggregation on the BLS12-381 curve, used in production at TeleSwap.</p>
+          <a class="repo" href="https://github.com/TeleportDAO/classic-bls12-382" target="_blank" rel="noopener">TeleportDAO/classic-bls12-382 ↗</a>
+          <div class="tags"><span class="tag">pairings</span><span class="tag">TypeScript</span></div>
+        </article>
+        <article class="proj px" data-cat="crypto">
+          <h3>Zcash-style shielded pool</h3>
+          <p>Private transfers on Sepolia: a Circom circuit, a Solidity Groth16 verifier, a subgraph and a browser client that proves in the browser.</p>
+          <a class="repo" href="https://github.com/mahdiidarabi/zcash-pour-contracts" target="_blank" rel="noopener">mahdiidarabi/zcash-pour-contracts ↗</a>
+          <div class="tags"><span class="tag">Circom</span><span class="tag">Groth16</span><span class="tag">Solidity</span></div>
+        </article>
+        <article class="proj px" data-cat="security">
+          <h3>DeFiHackLabs exploit PoC</h3>
+          <p>Reproduced a real DeFi exploit in Foundry. The contribution was merged into DeFiHackLabs.</p>
+          <a class="repo" href="https://github.com/SunWeb3Sec/DeFiHackLabs" target="_blank" rel="noopener">SunWeb3Sec/DeFiHackLabs ↗</a>
+          <div class="tags"><span class="tag">security</span><span class="tag">Foundry</span></div>
+        </article>
+        <article class="proj px" data-cat="security">
+          <h3>BuidlGuidl CTF solutions</h3>
+          <p>Solutions and exploit walkthroughs for the BuidlGuidl Solidity capture-the-flag challenges, with a write-up on Medium.</p>
+          <a class="repo" href="https://github.com/mahdiidarabi/ctf-buidl-guidl" target="_blank" rel="noopener">mahdiidarabi/ctf-buidl-guidl ↗</a>
+          <div class="tags"><span class="tag">security</span><span class="tag">Solidity</span></div>
+        </article>
+        <article class="proj px" data-cat="crypto">
+          <h3>ZK circuit from scratch</h3>
+          <p>A zero-knowledge circuit implemented from scratch in TypeScript.</p>
+          <a class="repo" href="https://github.com/mahdiidarabi/zk-circuit-from-scratch" target="_blank" rel="noopener">mahdiidarabi/zk-circuit-from-scratch ↗</a>
+          <div class="tags"><span class="tag">ZK</span><span class="tag">TypeScript</span></div>
+        </article>
+        <article class="proj px" data-cat="contracts">
+          <h3>Raw Bitcoin transactions in Go</h3>
+          <p>Create and sign raw Bitcoin transactions in Go with btcsuite. Pairs with my Bitcoin Script posts.</p>
+          <a class="repo" href="https://github.com/mahdiidarabi/raw-bitcoin-tx" target="_blank" rel="noopener">mahdiidarabi/raw-bitcoin-tx ↗</a>
+          <div class="tags"><span class="tag">Bitcoin</span><span class="tag">Go</span></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- WRITING -->
+    <section class="tab" id="tab-writing" data-name="writing" hidden>
+      <h2>Writing</h2>
+      <p class="muted">Technical writing on zero knowledge, Bitcoin, bridges and smart contract security. All posts on <a href="https://mahdidarabi.medium.com/" target="_blank" rel="noopener">Medium ↗</a></p>
+      <ul class="posts">
+        <li><span class="date">Aug 2026</span><span><span class="series">zkSNARKs</span><a href="https://mahdidarabi.medium.com/4-your-first-real-circuit-proving-youre-on-a-list-without-saying-who-you-are-205eb2eb21e4" target="_blank" rel="noopener">Your first real circuit: proving you're on a list without saying who you are</a></span></li>
+        <li><span class="date">Apr 2026</span><span><span class="series">zkSNARKs</span><a href="https://mahdidarabi.medium.com/inside-groth16-how-blinding-simulators-and-four-secret-numbers-make-zksnarks-zero-knowledge-f438d35de06d" target="_blank" rel="noopener">Inside Groth16: how blinding, simulators and four secret numbers make zkSNARKs zero-knowledge</a></span></li>
+        <li><span class="date">Apr 2026</span><span><span class="series">zkSNARKs</span><a href="https://medium.com/coinmonks/how-zksnarks-actually-work-r1cs-qap-and-pairings-explained-with-examples-ce7b102741e4" target="_blank" rel="noopener">How zkSNARKs actually work: R1CS, QAP and pairings explained with examples</a><span class="pub">Coinmonks</span></span></li>
+        <li><span class="date">Oct 2025</span><span><a href="https://mahdidarabi.medium.com/" target="_blank" rel="noopener">Solidity security vulnerabilities: common bugs and exploits in smart contracts, a BuidlGuidl CTF walkthrough</a></span></li>
+        <li><span class="date">May 2024</span><span><a href="https://mahdidarabi.medium.com/" target="_blank" rel="noopener">Bitcoin layer 2 landscape: how to secure layer 2s using Bitcoin?</a><span class="pub">TeleSwap</span></span></li>
+        <li><span class="date">Apr 2024</span><span><a href="https://mahdidarabi.medium.com/" target="_blank" rel="noopener">BRC-20 vs Runes: which protocol is best for fungible tokens on Bitcoin?</a><span class="pub">TeleSwap</span></span></li>
+        <li><span class="date">May 2023</span><span><a href="https://mahdidarabi.medium.com/" target="_blank" rel="noopener">TON 101: an introduction to Telegram's blockchain</a><span class="pub">Coinmonks</span></span></li>
+        <li><span class="date">Mar 2023</span><span><a href="https://mahdidarabi.medium.com/" target="_blank" rel="noopener">BLS signatures: unlocking signature aggregation for blockchain applications</a><span class="pub">TeleSwap</span></span></li>
+        <li><span class="date">Oct 2022</span><span><a href="https://mahdidarabi.medium.com/" target="_blank" rel="noopener">Blockchain bridges and cross-chain communication architecture</a><span class="pub">TeleSwap</span></span></li>
+        <li><span class="date">May 2021</span><span><a href="https://mahdidarabi.medium.com/" target="_blank" rel="noopener">Implementing multi-send on Ethereum with a Solidity smart contract</a></span></li>
+        <li><span class="date">Dec 2020</span><span><a href="https://mahdidarabi.medium.com/" target="_blank" rel="noopener">Build a P2SH address and spend its funds in Go</a><span class="pub">Bitcoin Script series</span></span></li>
+        <li><span class="date">Nov 2020</span><span><a href="https://mahdidarabi.medium.com/" target="_blank" rel="noopener">Create a raw Bitcoin transaction and sign it with Go</a><span class="pub">Bitcoin Script series</span></span></li>
+      </ul>
+    </section>
+
+    <!-- SKILLS -->
+    <section class="tab" id="tab-skills" data-name="skills" hidden>
+      <h2>Skills</h2>
+      <div class="skillgrid">
+        <div class="skill px"><h3>Blockchain</h3><div class="pills"><span>Solidity</span><span>EVM</span><span>Upgradeable proxies</span><span>Hardhat</span><span>Foundry</span><span>LayerZero</span><span>Bitcoin</span><span>Bitcoin Script</span><span>Cross-chain bridges</span><span>Hyperledger Fabric</span></div></div>
+        <div class="skill px"><h3>Cryptography</h3><div class="pills"><span>MPC / TSS</span><span>Key management</span><span>ECDSA</span><span>EdDSA</span><span>BLS12-381</span><span>zkSNARKs</span><span>Circom</span><span>Groth16</span></div></div>
+        <div class="skill px"><h3>Security</h3><div class="pills"><span>Smart contract review</span><span>Audit remediation</span><span>Exploit reproduction</span><span>Threshold key recovery</span><span>Reentrancy, oracle, replay testing</span></div></div>
+        <div class="skill px"><h3>Backend</h3><div class="pills"><span>Go</span><span>Python</span><span>Django</span><span>TypeScript</span><span>Node.js</span><span>REST</span><span>GraphQL</span><span>PostgreSQL</span><span>Redis</span><span>Docker</span><span>AWS</span></div></div>
+        <div class="skill px"><h3>AI &amp; agents</h3><div class="pills"><span>LLMs</span><span>Agentic workflows</span><span>LLM evaluation</span><span>Benchmarks &amp; verifiers</span><span>Coding agents</span><span>Agent sandboxes</span><span>Claude Code</span><span>Codex</span><span>OpenHands</span><span>Harbor</span><span>OpenRouter</span><span>LiteLLM</span></div></div>
+        <div class="skill px"><h3>Education</h3><div class="pills"><span>B.Sc. Electrical Engineering</span><span>MBA</span><span>Sharif University of Technology</span></div></div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="tab" id="tab-contact" data-name="contact" hidden>
+      <h2>Contact</h2>
+      <p class="lede">The fastest way to reach me is email. I usually reply within a day.</p>
+      <div class="contact">
+        <div class="row px"><span class="k">Email</span><span class="v" id="email-text">mahdi.darabi.official@gmail.com</span><button type="button" class="copy" id="copy-email">Copy</button></div>
+        <div class="row px"><span class="k">LinkedIn</span><a class="v" href="https://www.linkedin.com/in/mahdi-darabi" target="_blank" rel="noopener">linkedin.com/in/mahdi-darabi ↗</a><span></span></div>
+        <div class="row px"><span class="k">GitHub</span><a class="v" href="https://github.com/mahdiidarabi" target="_blank" rel="noopener">github.com/mahdiidarabi ↗</a><span></span></div>
+        <div class="row px"><span class="k">X</span><a class="v" href="https://x.com/MadDiDrb" target="_blank" rel="noopener">@MadDiDrb ↗</a><span></span></div>
+        <div class="row px"><span class="k">Medium</span><a class="v" href="https://mahdidarabi.medium.com/" target="_blank" rel="noopener">mahdidarabi.medium.com ↗</a><span></span></div>
+        <div class="row px"><span class="k">Location</span><span class="v">Istanbul, Türkiye · UTC+3</span><span></span></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- tabs with hash routing ---------- */
+  var names = ['about', 'experience', 'projects', 'writing', 'skills', 'contact'];
+  var links = document.querySelectorAll('nav a[data-tab]');
+  function show(name, focus) {
+    if (names.indexOf(name) < 0) name = 'about';
+    names.forEach(function (n) {
+      var el = document.getElementById('tab-' + n);
+      var on = n === name;
+      el.hidden = !on;
+      if (on) { el.classList.remove('enter'); void el.offsetWidth; el.classList.add('enter'); }
+    });
+    links.forEach(function (a) {
+      if (a.getAttribute('data-tab') === name) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+    });
+    if (focus && window.innerWidth <= 860) { document.querySelector('main').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }
+  }
+  window.addEventListener('hashchange', function () { show(location.hash.slice(1), true); });
+  show(location.hash.slice(1), false);
+
+  /* ---------- project filters ---------- */
+  var fbtns = document.querySelectorAll('.filters button');
+  fbtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var f = b.getAttribute('data-f');
+      fbtns.forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      document.querySelectorAll('.proj').forEach(function (p) { p.hidden = !(f === 'all' || p.getAttribute('data-cat') === f); });
+    });
+  });
+
+  /* ---------- copy email ---------- */
+  var cb = document.getElementById('copy-email');
+  var et = document.getElementById('email-text');
+  cb.addEventListener('click', function () {
+    var email = et.textContent.trim();
+    function done(m) { cb.textContent = m; setTimeout(function () { cb.textContent = 'Copy'; }, 1600); }
+    function fallback() { var r = document.createRange(); r.selectNodeContents(et); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); done('Selected'); }
+    try { navigator.clipboard.writeText(email).then(function () { done('Copied'); }, fallback); } catch (e) { fallback(); }
+  });
+
+  /* ---------- pixel monogram avatar (16x16 sprite) ---------- */
+  var av = document.getElementById('avatar');
+  if (av && av.getContext) {
+    var g = av.getContext('2d');
+    g.fillStyle = '#475e7e'; g.fillRect(0, 0, 16, 16);
+    for (var y = 0; y < 16; y++) for (var x = 0; x < 16; x++) {
+      if ((x + y) % 2 === 0 && (x * 7 + y * 3) % 5 === 0) { g.fillStyle = '#51698b'; g.fillRect(x, y, 1, 1); }
+    }
+    g.fillStyle = '#2b3a52'; g.fillRect(0, 14, 16, 2);
+    var M = ['10001', '11011', '10101', '10101', '10001', '10001', '10001'];
+    var D = ['11110', '10001', '10001', '10001', '10001', '10001', '11110'];
+    function glyph(rows, ox, oy) {
+      rows.forEach(function (row, j) {
+        for (var i = 0; i < 5; i++) if (row[i] === '1') {
+          g.fillStyle = '#04080f'; g.fillRect(ox + i + 1, oy + j + 1, 1, 1);
+        }
+      });
+      rows.forEach(function (row, j) {
+        for (var i = 0; i < 5; i++) if (row[i] === '1') { g.fillStyle = '#e7ecf4'; g.fillRect(ox + i, oy + j, 1, 1); }
+      });
+    }
+    glyph(M, 2, 4); glyph(D, 9, 4);
+    g.fillStyle = '#e7a56f'; g.fillRect(13, 1, 1, 1); g.fillStyle = '#c9773f'; g.fillRect(14, 2, 1, 1);
+  }
+
+  /* ---------- pixel field background ---------- */
+  var c = document.getElementById('bg');
+  if (!c || !c.getContext) return;
+  var ctx = c.getContext('2d');
+  var S = 8, cols = 0, rows = 0, cells = [];
+  var shades = ['#16233b', '#1b2b47', '#223555', '#2c4366', '#475e7e'];
+  function resize() {
+    var w = window.innerWidth, h = window.innerHeight;
+    cols = Math.ceil(w / S); rows = Math.ceil(h / S);
+    c.width = cols; c.height = rows;
+    cells = [];
+    var n = Math.min(260, Math.floor(cols * rows / 55));
+    for (var i = 0; i < n; i++) cells.push(newCell(true));
+    draw();
+  }
+  function newCell(seed) {
+    var x = Math.floor(Math.random() * cols), y = Math.floor(Math.random() * rows);
+    // denser toward the top-left and bottom-right corners, quiet in the middle
+    var dx = Math.min(x / cols, 1 - x / cols), dy = Math.min(y / rows, 1 - y / rows);
+    if (Math.random() < Math.min(dx, dy) * 2.4) { x = Math.floor(Math.random() * cols * 0.25); y = Math.floor(Math.random() * rows); }
+    return { x: x, y: y, s: Math.floor(Math.random() * shades.length), life: seed ? Math.random() : 0, speed: 0.002 + Math.random() * 0.006, ember: Math.random() < 0.02 };
+  }
+  function draw() {
+    ctx.fillStyle = '#0a1120'; ctx.fillRect(0, 0, cols, rows);
+    for (var i = 0; i < cells.length; i++) {
+      var p = cells[i];
+      var a = Math.sin(Math.PI * p.life);
+      if (a <= 0.05) continue;
+      ctx.globalAlpha = Math.round(a * 4) / 4;      // stepped fade, like a palette swap
+      ctx.fillStyle = p.ember ? '#e7a56f' : shades[p.s];
+      ctx.fillRect(p.x, p.y, 1, 1);
+    }
+    ctx.globalAlpha = 1;
+  }
+  var last = 0;
+  function tick(t) {
+    if (t - last > 90) {
+      last = t;
+      for (var i = 0; i < cells.length; i++) {
+        cells[i].life += cells[i].speed * 6;
+        if (cells[i].life >= 1) cells[i] = newCell(false);
+      }
+      draw();
+    }
+    if (!document.hidden) requestAnimationFrame(tick);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  if (!reduce) {
+    requestAnimationFrame(tick);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) requestAnimationFrame(tick); });
+  }
+})();
+</script>
+
+</body>
+</html>
