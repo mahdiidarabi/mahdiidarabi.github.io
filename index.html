@@ -176,7 +176,7 @@ p { margin: 0; }
 .series { font-family: var(--mono); font-size: 0.7rem; color: var(--shadow); background: var(--sky); padding: 1px 6px; margin-right: 8px; }
 
 /* skills */
-.skillgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.skillgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(3, auto); grid-auto-flow: column; gap: 20px; }
 .skill { padding: 18px; background: var(--panel-2); display: grid; gap: 10px; align-content: start; }
 .skill h3 { font-family: var(--display); font-weight: 600; font-size: 1.08rem; color: var(--ember); letter-spacing: -0.01em; }
 .pills { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -204,6 +204,7 @@ p { margin: 0; }
   .side-foot { display: none; }
   main { padding: 26px 20px 30px; }
   .figures, .cols, .grid, .skillgrid { grid-template-columns: minmax(0, 1fr); }
+  .skillgrid { grid-template-rows: none; grid-auto-flow: row; }
   .posts li { grid-template-columns: minmax(0, 1fr); gap: 2px; }
   .row { grid-template-columns: minmax(0, 1fr) auto; }
   .row .k { grid-column: 1 / -1; }
@@ -285,9 +286,9 @@ p { margin: 0; }
           <div class="job-head"><h3>AI Research Engineer <span>· Turing</span></h3><span class="date">09/2026 – now</span></div>
           <p class="org">AI research and training company · <a href="https://www.turing.com" target="_blank" rel="noopener">turing.com</a></p>
           <ul>
-            <li>Designed adversarial Terminal-Bench tasks from real bugs in production blockchain code (the lnd Lightning node in Go, the Vyper compiler). Three went unsolved in all 12 valid runs by frontier coding agents.</li>
-            <li>Built security-engineering tasks on Circom ZK circuits, tss-lib threshold-ECDSA wallet recovery and the Cosmos SDK.</li>
             <li>Built f2pgen, an LLM evaluation benchmark where coding agents write fail-to-pass tests for real GitHub PRs, judged by a deterministic verifier in Docker sandboxes. 5,000+ agent trials across 6 models.</li>
+            <li>Designed adversarial Terminal-Bench tasks from real bugs in production blockchain code (Lightning node in Go, Vyper compiler) with hidden end-to-end verifiers. Three tasks were model breakers in all 12 valid runs by frontier coding agents (Claude, GPT, Gemini, at max reasoning).</li>
+            <li>Built security-engineering tasks on Circom ZK circuits, tss-lib threshold-ECDSA wallet recovery and the Cosmos SDK.</li>
           </ul>
         </div></div>
         <div class="job"><div class="rail"></div><div class="job-body">
@@ -333,7 +334,7 @@ p { margin: 0; }
         <button type="button" id="f-all" data-f="all" aria-pressed="true">All</button>
         <button type="button" id="f-crypto" data-f="crypto" aria-pressed="false">Cryptography &amp; ZK</button>
         <button type="button" id="f-security" data-f="security" aria-pressed="false">Security</button>
-        <button type="button" id="f-contracts" data-f="contracts" aria-pressed="false">Bitcoin</button>
+        <button type="button" id="f-contracts" data-f="contracts" aria-pressed="false">Smart contracts</button>
       </div>
       <div class="grid">
         <article class="proj px" data-cat="crypto">
@@ -349,28 +350,36 @@ p { margin: 0; }
           <div class="tags"><span class="tag">Circom</span><span class="tag">Groth16</span><span class="tag">Solidity</span></div>
         </article>
         <article class="proj px" data-cat="security">
-          <h3>DeFiHackLabs exploit PoC</h3>
-          <p>Reproduced a real DeFi exploit in Foundry. The contribution was merged into DeFiHackLabs.</p>
-          <a class="repo" href="https://github.com/SunWeb3Sec/DeFiHackLabs" target="_blank" rel="noopener">SunWeb3Sec/DeFiHackLabs ↗</a>
-          <div class="tags"><span class="tag">security</span><span class="tag">Foundry</span></div>
-        </article>
-        <article class="proj px" data-cat="security">
           <h3>BuidlGuidl CTF solutions</h3>
           <p>Solutions and exploit walkthroughs for the BuidlGuidl Solidity capture-the-flag challenges, with a write-up on Medium.</p>
           <a class="repo" href="https://github.com/mahdiidarabi/ctf-buidl-guidl" target="_blank" rel="noopener">mahdiidarabi/ctf-buidl-guidl ↗</a>
           <div class="tags"><span class="tag">security</span><span class="tag">Solidity</span></div>
         </article>
+        <article class="proj px" data-cat="security">
+          <h3>DeFiHackLabs: SKP exploit PoC (merged)</h3>
+          <p>Reproduced the SKP/USDT drain on BNB Chain (about $212K) in Foundry. My pull request was merged into DeFiHackLabs.</p>
+          <a class="repo" href="https://github.com/SunWeb3Sec/DeFiHackLabs/pull/1040" target="_blank" rel="noopener">Merged PR #1040 · SunWeb3Sec/DeFiHackLabs ↗</a>
+          <a class="repo" href="https://github.com/mahdiidarabi/DeFiHackLabs" target="_blank" rel="noopener">My fork: mahdiidarabi/DeFiHackLabs ↗</a>
+          <div class="tags"><span class="tag">security</span><span class="tag">Foundry</span></div>
+        </article>
+      
+        <article class="proj px" data-cat="security">
+          <h3>ECDSA/EdDSA key recovery from related nonces</h3>
+          <p>Go implementation of the key-recovery attack from arXiv:2504.13737: recovers a private key when two signatures use related nonces (reuse, counters, or affine k2 = a·k1 + b), for ECDSA on secp256k1 and EdDSA.</p>
+          <a class="repo" href="https://github.com/mahdiidarabi/ecdsa-affine" target="_blank" rel="noopener">mahdiidarabi/ecdsa-affine ↗</a>
+          <div class="tags"><span class="tag">cryptanalysis</span><span class="tag">Go</span></div>
+        </article>
         <article class="proj px" data-cat="crypto">
-          <h3>ZK circuit from scratch</h3>
-          <p>A zero-knowledge circuit implemented from scratch in TypeScript.</p>
-          <a class="repo" href="https://github.com/mahdiidarabi/zk-circuit-from-scratch" target="_blank" rel="noopener">mahdiidarabi/zk-circuit-from-scratch ↗</a>
-          <div class="tags"><span class="tag">ZK</span><span class="tag">TypeScript</span></div>
+          <h3>Distributed key recovery for tss-lib</h3>
+          <p>My fork of binance/tss-lib that adds a distributed key-recovery module, so a T-of-N quorum can recover keys for threshold ECDSA and EdDSA wallets.</p>
+          <a class="repo" href="https://github.com/mahdiidarabi/tss-lib" target="_blank" rel="noopener">mahdiidarabi/tss-lib ↗</a>
+          <div class="tags"><span class="tag">MPC/TSS</span><span class="tag">Go</span></div>
         </article>
         <article class="proj px" data-cat="contracts">
-          <h3>Raw Bitcoin transactions in Go</h3>
-          <p>Create and sign raw Bitcoin transactions in Go with btcsuite. Pairs with my Bitcoin Script posts.</p>
-          <a class="repo" href="https://github.com/mahdiidarabi/raw-bitcoin-tx" target="_blank" rel="noopener">mahdiidarabi/raw-bitcoin-tx ↗</a>
-          <div class="tags"><span class="tag">Bitcoin</span><span class="tag">Go</span></div>
+          <h3>NFT factory and marketplace</h3>
+          <p>Solidity contracts for an NFT factory and marketplace, the pattern behind the NFT reward contracts I built at TotemFi.</p>
+          <a class="repo" href="https://github.com/mahdiidarabi/nft-factory" target="_blank" rel="noopener">mahdiidarabi/nft-factory ↗</a>
+          <div class="tags"><span class="tag">Solidity</span><span class="tag">NFTs</span></div>
         </article>
       </div>
     </section>
@@ -378,8 +387,9 @@ p { margin: 0; }
     <!-- WRITING -->
     <section class="tab" id="tab-writing" data-name="writing" hidden>
       <h2>Writing</h2>
-      <p class="muted">Technical writing on zero knowledge, Bitcoin, bridges and smart contract security, on Medium, Coinmonks and the TeleSwap blog. Profile: <a href="https://mahdidarabi.medium.com/" target="_blank" rel="noopener">Medium ↗</a></p>
+      <p class="muted">Research and technical writing on zero knowledge, on-chain identity, Bitcoin, bridges and smart contract security, on arXiv, Medium, Coinmonks and the TeleSwap blog. Profile: <a href="https://mahdidarabi.medium.com/" target="_blank" rel="noopener">Medium ↗</a></p>
       <ul class="posts">
+        <li><span class="date">Jul 2024</span><span><span class="series">Paper</span><a href="https://arxiv.org/abs/2407.10187" target="_blank" rel="noopener">IdentityChain</a><span class="pub">arXiv. Anonymity with accountability: a KYC service for public blockchains, built on a threshold-encrypted committee.</span></span></li>
         <li><span class="date">Aug 2026</span><span><span class="series">zkSNARKs 4/4</span><a href="https://medium.com/@mahdidarabi/4-your-first-real-circuit-proving-youre-on-a-list-without-saying-who-you-are-205eb2eb21e4" target="_blank" rel="noopener">Your first real circuit: proving you're on a list without saying who you are</a></span></li>
         <li><span class="date">Apr 2026</span><span><span class="series">zkSNARKs 3/4</span><a href="https://mahdidarabi.medium.com/inside-groth16-how-blinding-simulators-and-four-secret-numbers-make-zksnarks-zero-knowledge-f438d35de06d" target="_blank" rel="noopener">Inside Groth16: how blinding, simulators and four secret numbers make zkSNARKs zero-knowledge</a></span></li>
         <li><span class="date">Apr 2026</span><span><span class="series">zkSNARKs 2/4</span><a href="https://medium.com/coinmonks/how-zksnarks-actually-work-r1cs-qap-and-pairings-explained-with-examples-ce7b102741e4" target="_blank" rel="noopener">How zkSNARKs actually work: R1CS, QAP and pairings explained with examples</a><span class="pub">Coinmonks</span></span></li>
@@ -401,9 +411,9 @@ p { margin: 0; }
       <h2>Skills</h2>
       <div class="skillgrid">
         <div class="skill px"><h3>Blockchain</h3><div class="pills"><span>Solidity</span><span>EVM</span><span>Upgradeable proxies</span><span>Hardhat</span><span>Foundry</span><span>LayerZero</span><span>Bitcoin</span><span>Bitcoin Script</span><span>Cross-chain bridges</span><span>Hyperledger Fabric</span></div></div>
+        <div class="skill px"><h3>Backend</h3><div class="pills"><span>Go</span><span>Python</span><span>Django</span><span>TypeScript</span><span>Node.js</span><span>REST</span><span>GraphQL</span><span>PostgreSQL</span><span>Redis</span><span>Docker</span><span>AWS</span></div></div>
         <div class="skill px"><h3>Cryptography</h3><div class="pills"><span>MPC / TSS</span><span>Key management</span><span>ECDSA</span><span>EdDSA</span><span>BLS12-381</span><span>zkSNARKs</span><span>Circom</span><span>Groth16</span></div></div>
         <div class="skill px"><h3>Security</h3><div class="pills"><span>Smart contract review</span><span>Audit remediation</span><span>Exploit reproduction</span><span>Threshold key recovery</span><span>Reentrancy, oracle, replay testing</span></div></div>
-        <div class="skill px"><h3>Backend</h3><div class="pills"><span>Go</span><span>Python</span><span>Django</span><span>TypeScript</span><span>Node.js</span><span>REST</span><span>GraphQL</span><span>PostgreSQL</span><span>Redis</span><span>Docker</span><span>AWS</span></div></div>
         <div class="skill px"><h3>AI &amp; agents</h3><div class="pills"><span>LLMs</span><span>Agentic workflows</span><span>LLM evaluation</span><span>Benchmarks &amp; verifiers</span><span>Coding agents</span><span>Agent sandboxes</span><span>Claude Code</span><span>Codex</span><span>OpenHands</span><span>Harbor</span><span>OpenRouter</span><span>LiteLLM</span></div></div>
         <div class="skill px"><h3>Education</h3><div class="pills"><span>B.Sc. Electrical Engineering</span><span>MBA</span><span>Sharif University of Technology</span></div></div>
       </div>
